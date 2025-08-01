@@ -2,6 +2,7 @@ import random
 import os
 import platform
 
+#Alteração teste
 
 matriz_memoria = []
 jogador_um = True
