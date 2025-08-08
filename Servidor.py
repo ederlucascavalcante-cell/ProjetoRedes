@@ -60,16 +60,16 @@ def enviar_dados(sock, protocolo, dados, ip_adress=None):
 
     try:
         if protocolo.upper() == 'TCP':
-            socket.sendall(enviadao)
+            sock.sendall(enviadao)
             # Garante que todas as partes do pacotes sejam enviados 
             # evitando quaisquer fragmentações do pacote de dados
         else:
-            socket.sendto(ip_adress, enviadao)
+            sock.sendto(enviadao, ip_adress)
             # O comando que usamos é sendto para garantir que o pacote 
             # seja enviado sempre para aquele endereço ip especificado
 
     except socket.error as e:
-        print('Erro ao enviar o socket')
+        print('Erro ao enviar o socket:', e)
         return False
     
     return True
@@ -79,13 +79,13 @@ def receber_dados(sock, protocolo, buffer_size = 1024):
     
     try:
         if protocolo.upper() == 'TCP':
-            enviadao = socket.recv(buffer_size)
+            enviadao = sock.recv(buffer_size)
             if not enviadao:
                 return None, None
             endereço_op = None
 
         elif protocolo.upper() == 'UDP':
-            enviadao, endereço_op = socket.recevfrom(buffer_size)
+            enviadao, endereço_op = sock.recvfrom(buffer_size)
         
         dados = json.loads(enviadao.decode('utf-8'))
         # Única coisa que faz vai ser basicamente decodificar 
