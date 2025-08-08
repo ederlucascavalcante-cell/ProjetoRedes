@@ -2,7 +2,6 @@ import random
 import os
 import platform
 
-
 matriz_memoria = []
 matriz_memoria_bool = []
 jogador_um = True
@@ -10,6 +9,32 @@ jogador_dois = False
 escolha1,escolha2 = [],[]
 l1, c1, l2, c2 = 0,0,0,0
 lista_sigilo = [['xxxx','xxxx','xxxx','xxxx'],['xxxx','xxxx','xxxx','xxxx'],['xxxx','xxxx','xxxx','xxxx']]
+lista_num_cores = [1,1,2,2,3,3,4,4,5,5,6,6]
+
+def iniciar():
+    for i in range (3):
+        linha = []
+        linha_bool = []
+        for j in range(4):
+            numero_da_vez = random.choice(lista_num_cores)
+            linha_bool += [False]
+            linha += [numero_da_vez]
+            lista_num_cores.remove(numero_da_vez)
+        matriz_memoria_bool += [linha_bool]
+        matriz_memoria += [linha]
+    ## aqui é selecionado um número entre os da matriz
+    ## e esse mesmo número é retirado da lista inicial para que não possa ser escolhido novamente
+
+    apelido = matriz_memoria
+
+    lista_cores_reais = [['0','0','0','0'],['0','0','0','0'],['0','0','0','0']]
+        ##criação da matriz vazia, para poder ser apresentada ao usuário
+
+    for i in range(3):
+        for j in range(4):
+            lista_cores_reais[i][j] = found_colors(apelido[i][j])
+    
+    return apelido, lista_cores_reais
 
 def limpar_terminal():
     sistema_operacional = platform.system()
@@ -54,39 +79,13 @@ def found_colors (n):
     if n == 6:
         return "white"
 
-#Cores e seus pares:
+#  Cores e seus pares:
 #   1 - red
 #   2 - green
 #   3 - blue
 #   4 - orange
 #   5 - black
 #   6 - white
-
-lista_num_cores = [1,1,2,2,3,3,4,4,5,5,6,6]
-
-
-for i in range (3):
-    linha = []
-    linha_bool = []
-    for j in range(4):
-        numero_da_vez = random.choice(lista_num_cores)
-        linha_bool += [False]
-        linha += [numero_da_vez]
-        lista_num_cores.remove(numero_da_vez)
-    matriz_memoria_bool += [linha_bool]
-    matriz_memoria += [linha]
-## aqui é selecionado um número entre os da matriz
-## e esse mesmo número é retirado da lista inicial para que não possa ser escolhido novamente
-
-apelido = matriz_memoria
-
-
-lista_cores_reais = [['0','0','0','0'],['0','0','0','0'],['0','0','0','0']]
-##criação da matriz vazia, para poder ser apresentada ao usuário
-
-for i in range(3):
-    for j in range(4):
-        lista_cores_reais[i][j] = found_colors(apelido[i][j])
 
 while True:
 
