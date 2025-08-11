@@ -2,8 +2,7 @@ import random
 import os
 import platform
 
-matriz_memoria = []
-matriz_memoria_bool = []
+
 jogador_um = True
 jogador_dois = False
 escolha1,escolha2 = [],[]
@@ -12,6 +11,10 @@ lista_sigilo = [['xxxx','xxxx','xxxx','xxxx'],['xxxx','xxxx','xxxx','xxxx'],['xx
 lista_num_cores = [1,1,2,2,3,3,4,4,5,5,6,6]
 
 def iniciar():
+    matriz_memoria = []
+    matriz_memoria_bool = []
+    lista_num_cores = [1,1,2,2,3,3,4,4,5,5,6,6]
+
     for i in range (3):
         linha = []
         linha_bool = []
@@ -34,7 +37,8 @@ def iniciar():
         for j in range(4):
             lista_cores_reais[i][j] = found_colors(apelido[i][j])
     
-    return apelido, lista_cores_reais
+    return apelido, lista_cores_reais, matriz_memoria_bool
+
 
 def limpar_terminal():
     sistema_operacional = platform.system()
@@ -43,6 +47,7 @@ def limpar_terminal():
         os.system("cls")
     else:
         os.system("clear")
+
 
 def esconder_cartao():
     for i in range(3):
@@ -57,13 +62,16 @@ def mostrar_cartao(l,c,cor):
     print()
     lista_sigilo[l][c] = 'xxxx'
 
+
 def atualizar_tabuleiro(l1,c1,cor1, l2, c2, cor2):
     lista_sigilo[l1][c1] = cor1
     lista_sigilo[l2][c2] = cor2
 
+
 def atualizar_tabuleiro_bool(l1,c1, l2, c2):
     matriz_memoria_bool[l1][c1] = True
     matriz_memoria_bool[l2][c2] = True
+
 
 def found_colors (n):
     if n == 1:
@@ -87,8 +95,9 @@ def found_colors (n):
 #   5 - black
 #   6 - white
 
-while True:
+apelido, lista_cores_reais, matriz_memoria_bool = iniciar()
 
+while True:
 
     esconder_cartao()
 
@@ -99,7 +108,7 @@ while True:
             l1 = int(escolha1[0])
             c1 = int(escolha1[1])
             if matriz_memoria_bool[l1][c1] == False:
-                print(mostrar_cartao(l1, c1, lista_cores_reais[l1][c1]))
+                mostrar_cartao(l1, c1, lista_cores_reais[l1][c1])
                 print()
                 break
             else:
@@ -110,7 +119,7 @@ while True:
             l2 = int(escolha2[0])
             c2 = int(escolha2[1])
             if matriz_memoria_bool[l2][c2] == False:
-                print(mostrar_cartao(l2, c2, lista_cores_reais[l2][c2]))
+                mostrar_cartao(l2, c2, lista_cores_reais[l2][c2])
                 print()
                 break
             else:
@@ -122,4 +131,4 @@ while True:
             print("You find one pair! Congratulations!")
             atualizar_tabuleiro(l1, c1, lista_cores_reais[l1][c1], l2, c2, lista_cores_reais[l2][c2])
             atualizar_tabuleiro_bool(l1,c1, l2,c2)
-            print(esconder_cartao())
+            esconder_cartao()

@@ -64,7 +64,7 @@ def enviar_dados(sock, protocolo, dados, ip_adress=None):
             # Garante que todas as partes do pacotes sejam enviados 
             # evitando quaisquer fragmentações do pacote de dados
         else:
-            sock.sendto(enviadao, ip_adress)
+            sock.sendto(ip_adress, enviadao)
             # O comando que usamos é sendto para garantir que o pacote 
             # seja enviado sempre para aquele endereço ip especificado
 
