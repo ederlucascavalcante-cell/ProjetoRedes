@@ -30,7 +30,7 @@ def inicializacao():
 
     host = input("Digite o endereço IP: ")
     
-    return host, modo, porta, protocolo
+    return host, modo.upper(), porta, protocolo.upper()
 
 
 def main():
@@ -40,7 +40,6 @@ def main():
     except ValueError as e:
         print('Erro ao adicionar os valores, erro')
         sys.exit(1)
-
 
     sock = None
     conn = None
@@ -52,22 +51,24 @@ def main():
         # Definindo o socket a partir da função que estabelece a comunicação entre os clientes
 
         if modo == 'H':
-            jogador = 2
-            sock.bind(host, porta)
+            jogador = 1
+            sock.bind((host, porta))
             # Associa um endereço ip a uma porta
 
             if protocolo == 'TCP':
                 sock.listen()
                 # Aqui o servidor está 'ouvindo', esperando alguém formar conexão
                 conn, addr = sock.accept()
+                print(f"[INFO] Oponente conectado de {addr}. Partida iniciada!")
                 # Ele aceita a requisição daquele endereço ip para a conexão
                 comunicacao = conn
                 # Aqui, o código está passando as informações contidas em
                 # conn para uma nova variável e depois menciona-la novamente
                 # em um momento posterior do código. Por ser uma conexão fixa, usamos o conn
+                
 
             elif protocolo == 'UDP':
-                print()
+                print("[INFO] Aguardando a primeira mensagem do oponente para iniciar...")
                 iniciar, endereco_op = receber_dados(sock, 'UDP')
                 # Em UDP, como não há conexão fixa, o hospedeiro é obrigado a
                 # aguardar primeiro uma mensagem de quem está tentando se conectar
@@ -84,8 +85,8 @@ def main():
                 # Em UDP, por ser um protocolo em que precisa é necessário a atualização
                 # do endereço IP, sempre vai ser necessário estabelecer a conexão através do sock 
 
-        elif modo == 'C':
-            jogador = 1
+        else:
+            jogador = 2
             endereco_op = (host, porta)
             # Define o endereço do oponente através do IP do hospedeiro(host) e da porta
 
@@ -108,8 +109,7 @@ def main():
 
         while True:
             if jogador == 1:
-                # Exibir a matriz
-
+                print("[SUA VEZ] Digite sua jogada:")
                 try:
                     qlq = input('Qlq merda ')
                     # Parte do código que vai coletar as informações que ele vai mandar
@@ -123,7 +123,7 @@ def main():
 
             # --- Receber a jogada do Jogador 2 (oponente) ---
             elif jogador == 2:
-                print("Esperando oponente...")
+                print("[VEZ DO OPONENTE] Aguardando jogada...")
 
                 dados_recebidos, endereco_udp = receber_dados(comunicacao, protocolo)
 
