@@ -24,20 +24,18 @@ def inicializacao():
             if 1024 <= porta <= 65535:
                 break
             else:
-                print('Porta incorreta. Experimento pôr alguma no intervalo entre 1024 e seis5535')
+                print('Porta incorreta. Experimento pôr alguma no intervalo entre 1024 e 65535')
         except ValueError:
                 print('Por favor, insira um valor inteiro.')
 
     host = input("Digite o endereço IP: ")
-
-    permissao = True
     
-    return host, modo, porta, protocolo, permissao
+    return host, modo, porta, protocolo
 
 
 def main():
     try:
-        host, modo, porta, protocolo, permissao = inicializacao()
+        host, modo, porta, protocolo = inicializacao()
 
     except ValueError as e:
         print('Erro ao adicionar os valores, erro')
@@ -47,22 +45,21 @@ def main():
     sock = None
     conn = None
     endereco_op = None
-    jogador1 = None
-    jogador2 = None
+    jogador = 1
 
     try:
         sock = socket_comunicacao(protocolo, host, porta)
         # Definindo o socket a partir da função que estabelece a comunicação entre os clientes
 
         if modo == 'H':
-            jogador1 = ''
+            jogador = 2
             sock.bind(host, porta)
             # Associa um endereço ip a uma porta
 
             if protocolo == 'TCP':
                 sock.listen()
                 # Aqui o servidor está 'ouvindo', esperando alguém formar conexão
-                conn = sock.accept()
+                conn, addr = sock.accept()
                 # Ele aceita a requisição daquele endereço ip para a conexão
                 comunicacao = conn
                 # Aqui, o código está passando as informações contidas em
@@ -88,7 +85,7 @@ def main():
                 # do endereço IP, sempre vai ser necessário estabelecer a conexão através do sock 
 
         elif modo == 'C':
-            jogador2 = None
+            jogador = 1
             endereco_op = (host, porta)
             # Define o endereço do oponente através do IP do hospedeiro(host) e da porta
 
@@ -110,7 +107,7 @@ def main():
 
 
         while True:
-            if jogador1:
+            if jogador == 1:
                 # Exibir a matriz
 
                 try:
@@ -122,11 +119,10 @@ def main():
                 
                 enviar_dados(comunicacao, protocolo, 'a matriz alterada lá', endereco_op)
 
-                jogador1 = None
-                jogador2 = ''
+                jogador = 2
 
             # --- Receber a jogada do Jogador 2 (oponente) ---
-            if jogador2:
+            elif jogador == 2:
                 print("Esperando oponente...")
 
                 dados_recebidos, endereco_udp = receber_dados(comunicacao, protocolo)
@@ -141,8 +137,7 @@ def main():
                 except Exception as e:
                     print(f"Erro ao receber jogada: {e}")
 
-                jogador1 = ''
-                jogador2 = None
+                jogador = 1
 
 
     except Exception as e:
