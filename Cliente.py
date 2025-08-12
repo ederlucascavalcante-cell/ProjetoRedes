@@ -1,7 +1,38 @@
 import socket
+import tkinter
 import sys
 from Servidor import receber_dados, socket_comunicacao, enviar_dados, receber_dados
+from JogoInterface import criar_tabuleiro, checar_par, virar_carta
 
+####################################################################################################
+
+CORES_MAP = {
+    1: 'red',
+    2: 'green',
+    3: 'blue',
+    4: 'orange',
+    5: 'purple',
+    6: 'white', }
+
+# Variáveis de controle do jogo
+primeira_escolha_btn = None
+segunda_escolha_btn = None
+cartoes_encontrados = 0
+botoes = []  # Lista para armazenar os objetos Button
+is_cheking = False  # Flag para evitar cliques enquanto o par está sendo verificado
+
+matriz_logica = criar_tabuleiro()
+
+janela_principal = tkinter.Tk()
+janela_principal.title("Jogo da Memória")
+janela_principal.geometry("400x300")
+janela_principal.resizable(False, False)
+
+frame_tabuleiro = tkinter.Frame(janela_principal, bg="#333333", padx=10, pady=10)
+frame_tabuleiro.pack(pady=20)
+
+
+####################################################################################################
 
 def inicializacao():
     while True:
@@ -9,14 +40,14 @@ def inicializacao():
         if modo.upper() == 'H' or modo.upper() == 'C':
             break
         else:
-            print('Digite uma opção válida.')
+            print('Por favor, digite um modo válido. C ou H.')
 
     while True:
         protocolo = input('Qual procolo será utilizado? UDP ou TCP? ')
         if protocolo.upper() == 'TCP' or protocolo.upper() == 'UDP':
             break
         else:
-            print('Digite uma opção válida.')
+            print('Por favor, digite um protocolo válido. UDP ou TCP')
 
     while True:
         try:
@@ -24,7 +55,7 @@ def inicializacao():
             if 1024 <= porta <= 65535:
                 break
             else:
-                print('Porta incorreta. Experimento pôr alguma no intervalo entre 1024 e 65535')
+                print('Porta incorreta. Experimente pôr alguma no intervalo entre 1024 e 65535')
         except ValueError:
                 print('Por favor, insira um valor inteiro.')
 
@@ -44,14 +75,14 @@ def main():
     sock = None
     conn = None
     endereco_op = None
-    jogador = 1
+    jogador = True
 
     try:
         sock = socket_comunicacao(protocolo, host, porta)
         # Definindo o socket a partir da função que estabelece a comunicação entre os clientes
 
         if modo == 'H':
-            jogador = 1
+            jogador = True
             sock.bind((host, porta))
             # Associa um endereço ip a uma porta
 
@@ -74,7 +105,7 @@ def main():
                 # aguardar primeiro uma mensagem de quem está tentando se conectar
                 # para assim observar qual o endereço desse host
                 if iniciar and iniciar.get('cond') == 'iniciar':
-                    print('Oponente conectado')
+                    print('Oponente Conectado')
                     # A partir da função que foi adicionada na situação em que há o usuário
                     # é quem está se conectando, recebemos a confirmação de que o software
                     # pode ser iniciado, assim como recebemos o endereçço.
@@ -86,7 +117,7 @@ def main():
                 # do endereço IP, sempre vai ser necessário estabelecer a conexão através do sock 
 
         else:
-            jogador = 2
+            jogador = False
             endereco_op = (host, porta)
             # Define o endereço do oponente através do IP do hospedeiro(host) e da porta
 
@@ -108,22 +139,36 @@ def main():
 
 
         while True:
-            if jogador == 1:
-                print("[SUA VEZ] Digite sua jogada:")
+            if jogador:
+                print("[VEZ DO JOGADOR] Qual será a sua jogada?: ")
+
                 try:
-                    qlq = input('Qlq merda ')
-                    # Parte do código que vai coletar as informações que ele vai mandar
-                    break
+                    for l in range(3):
+                        for c in range(4):
+                            cartao = tkinter.Button(frame_tabuleiro, text=' ', font=('Arial', 18), width=5, height=2, bg='gray', activebackground='lightgray')
+                            
+                            # Correção: Passa l e c diretamente para a função usando lambda
+                            cartao.config(command=lambda linha=l, coluna=c, btn=cartao: virar_carta(linha, coluna, btn))
+                            
+                            # Posiciona o botão na grade
+                            cartao.grid(row=l, column=c, padx=5, pady=5)
+                            botoes.append(cartao)
+
+                    # --- Inicia a aplicação ---
+                    janela_principal.mainloop()
+
                 except Exception as e:
                     print(f"Erro ao enviar jogada: {e}")
                 
-                enviar_dados(comunicacao, protocolo, 'a matriz alterada lá', endereco_op)
 
-                jogador = 2
+                matriz_enviar = {'matriz': matriz_logica}
+                enviar_dados(comunicacao, protocolo, matriz_enviar, endereco_op)
+
+                jogador = False
 
             # --- Receber a jogada do Jogador 2 (oponente) ---
-            elif jogador == 2:
-                print("[VEZ DO OPONENTE] Aguardando jogada...")
+            else:
+                print("[VEZ DO OPONENTE] Aguardando o oponente realiza a jogada...")
 
                 dados_recebidos, endereco_udp = receber_dados(comunicacao, protocolo)
 
@@ -137,7 +182,8 @@ def main():
                 except Exception as e:
                     print(f"Erro ao receber jogada: {e}")
 
-                jogador = 1
+                jogador = True
+                matriz_logica = dados_recebidos.get('matriz', matriz_logica)
 
 
     except Exception as e:
@@ -148,6 +194,7 @@ def main():
             conn.close()
         if sock:
             sock.close()
+
 
 if __name__ == "__main__":
     main() 

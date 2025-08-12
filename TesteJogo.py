@@ -2,7 +2,6 @@ import random
 import os
 import platform
 
-
 jogador_um = True
 jogador_dois = False
 escolha1,escolha2 = [],[]
@@ -95,40 +94,46 @@ def found_colors (n):
 #   5 - black
 #   6 - white
 
-apelido, lista_cores_reais, matriz_memoria_bool = iniciar()
 
-while True:
+def mainJ():
 
-    esconder_cartao()
+    apelido, lista_cores_reais, matriz_memoria_bool = iniciar()
+
+    while True:
+
+        esconder_cartao()
+
+        if jogador_um:
+            while True:
+                escolha1 = input().split()
+                l1 = int(escolha1[0])
+                c1 = int(escolha1[1])
+                if matriz_memoria_bool[l1][c1] == False:
+                    mostrar_cartao(l1, c1, lista_cores_reais[l1][c1])
+                    print()
+                    break
+                else:
+                    print("Essa carta ja foi encontrada")
+                
+            while True:
+                escolha2 = input().split()
+                l2 = int(escolha2[0])
+                c2 = int(escolha2[1])
+                if matriz_memoria_bool[l2][c2] == False:
+                    mostrar_cartao(l2, c2, lista_cores_reais[l2][c2])
+                    print()
+                    break
+
+                else:
+                    print("Essa carta ja foi encontrada")
 
 
-    if jogador_um:
-        while True:
-            escolha1 = input().split()
-            l1 = int(escolha1[0])
-            c1 = int(escolha1[1])
-            if matriz_memoria_bool[l1][c1] == False:
-                mostrar_cartao(l1, c1, lista_cores_reais[l1][c1])
-                print()
-                break
-            else:
-                print("Essa carta ja foi encontrada")
-            
-        while True:
-            escolha2 = input().split()
-            l2 = int(escolha2[0])
-            c2 = int(escolha2[1])
-            if matriz_memoria_bool[l2][c2] == False:
-                mostrar_cartao(l2, c2, lista_cores_reais[l2][c2])
-                print()
-                break
-            else:
-                print("Essa carta ja foi encontrada")
+            if apelido[l1][c1] == apelido[l2][c2] and (l1!=l2 or c1!=c2) :
+                print("You find one pair! Congratulations!")
+                atualizar_tabuleiro(l1, c1, lista_cores_reais[l1][c1], l2, c2, lista_cores_reais[l2][c2])
+                atualizar_tabuleiro_bool(l1,c1, l2,c2)
+                esconder_cartao()
 
-        limpar_terminal()
 
-        if apelido[l1][c1] == apelido[l2][c2]:
-            print("You find one pair! Congratulations!")
-            atualizar_tabuleiro(l1, c1, lista_cores_reais[l1][c1], l2, c2, lista_cores_reais[l2][c2])
-            atualizar_tabuleiro_bool(l1,c1, l2,c2)
-            esconder_cartao()
+if __name__ == "__main__":
+    mainJ()
