@@ -35,7 +35,24 @@ def criar_tabuleiro():
     ]
     return matriz
 
-matriz_logica = criar_tabuleiro()
+
+def iniciar():
+    janela_principal = tkinter.Tk()
+    janela_principal.title("Jogo da Memória")
+    janela_principal.geometry("400x300")
+    janela_principal.resizable(False, False)
+
+    frame_tabuleiro = tkinter.Frame(janela_principal, bg="#333333", padx=10, pady=10)
+    frame_tabuleiro.pack(pady=20)
+
+    matriz_logica = criar_tabuleiro()
+
+    return frame_tabuleiro, janela_principal, matriz_logica
+
+# Comentário enquanto estiver usando a classe principal
+frame_tabuleiro, janela_principal, matriz_logica = iniciar()
+# Comentário enquanto estiver usando a classe principal
+
 
 def checar_par():
     """Verifica se as duas cartas viradas formam um par."""
@@ -64,6 +81,7 @@ def checar_par():
     segunda_escolha_btn = None
     is_cheking = False
 
+
 def virar_carta(l, c, cartao_clicado):
     """Lida com o clique do jogador em uma carta."""
     global primeira_escolha_btn, segunda_escolha_btn, is_cheking
@@ -85,27 +103,25 @@ def virar_carta(l, c, cartao_clicado):
         # Agenda a checagem do par para ocorrer após 1 segundo
         janela_principal.after(1000, checar_par)
 
+
 # --- Criação da Interface Gráfica ---
+def mainJ():
+    # Cria e posiciona os botões do tabuleiro
+    for l in range(3):
+        for c in range(4):
+            cartao = tkinter.Button(frame_tabuleiro, text=' ', font=('Arial', 18), width=5, height=2, bg='gray', activebackground='lightgray')
+            
+            # Correção: Passa l e c diretamente para a função usando lambda
+            cartao.config(command=lambda linha=l, coluna=c, btn=cartao: virar_carta(linha, coluna, btn))
+            
+            # Posiciona o botão na grade
+            cartao.grid(row=l, column=c, padx=5, pady=5)
+            botoes.append(cartao)
 
-janela_principal = tkinter.Tk()
-janela_principal.title("Jogo da Memória")
-janela_principal.geometry("400x300")
-janela_principal.resizable(False, False)
+    # --- Inicia a aplicação ---
+    janela_principal.mainloop()
 
-frame_tabuleiro = tkinter.Frame(janela_principal, bg="#333333", padx=10, pady=10)
-frame_tabuleiro.pack(pady=20)
 
-# Cria e posiciona os botões do tabuleiro
-for l in range(3):
-    for c in range(4):
-        cartao = tkinter.Button(frame_tabuleiro, text=' ', font=('Arial', 18), width=5, height=2, bg='gray', activebackground='lightgray')
-        
-        # Correção: Passa l e c diretamente para a função usando lambda
-        cartao.config(command=lambda linha=l, coluna=c, btn=cartao: virar_carta(linha, coluna, btn))
-        
-        # Posiciona o botão na grade
-        cartao.grid(row=l, column=c, padx=5, pady=5)
-        botoes.append(cartao)
-
-# --- Inicia a aplicação ---
-janela_principal.mainloop()
+if __name__ == "__main__":
+    mainJ()
+    iniciar()
