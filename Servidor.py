@@ -52,7 +52,7 @@ def socket_comunicacao(protocolo, host, porta):
     return sock
 
 
-def enviar_dados(sock, protocolo, dados, ip_adress=None):
+def enviar_dados(sock, protocolo, dados, ip_address=None):
     enviadao = json.dumps(dados).encode('utf-8')
     # Variável e comandos que serão responsáveis por converter algo em dicionário
     #  Python, isto é, dados semelhante a "'status':'iniciar' e transformar
@@ -64,7 +64,7 @@ def enviar_dados(sock, protocolo, dados, ip_adress=None):
             # Garante que todas as partes do pacotes sejam enviados 
             # evitando quaisquer fragmentações do pacote de dados
         else:
-            sock.sendto(ip_adress, enviadao)
+            sock.sendto(enviadao, ip_address)
             # O comando que usamos é sendto para garantir que o pacote 
             # seja enviado sempre para aquele endereço ip especificado
 
