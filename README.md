@@ -43,58 +43,55 @@ O jogo será executado por meio do terminal, seguindo os passos adiante:
 6 - A conexão será estabelecida e o jogo vai começar                           
 
 ## Protocolo de camada de aplicação
-Para garantir um padrão na comunicação entre os cliente, um protocolo de camada de aplicação simples foi definido. As mensagens são trocadas no formato JSON, que oferece flexibildiade e clareza. Todas as mensagens enviadas contêm um campo 'tipo' que define sua finalidade.
+Para garantir um padrão na comunicação entre os cliente, um protocolo de camada de aplicação simples foi definido. As mensagens são trocadas no formato JSON, que oferece flexibildiade e clareza, assim como por messages boxes pela interface. Todas as mensagens enviadas podem ser dividas em um 'tipo', que define sua finalidade.
 
 ### Tipos de Mensagens Definidos: 
-- INICIAR_CONEXAO (Apenas UDP)
-- Descrição: Usada pelo cliente que se conecta para que o hospedeiro (host) descubra o seu endereço IP e porta.
+- CONEXÃO
+- Descrição: Mensagens que exibem o status da conexão, isto é, se o o socket está aguardando conexão, se está esperando o hospedeiro, etc.
 - Exemplo: 
-
-		{
-		  "tipo": "INICIAR_CONEXAO",
-		  "dados": {
-		    "mensagem": "quero_conectar"
-		  }
-		}
+	
+		if protocolo_usado == 'TCP':
+                messagebox.showinfo("Conectando", "Tentando conectar ao hospedeiro...")
+                sock.connect(endereco_op)
+                messagebox.showinfo("INFO", "Conectado ao hospedeiro.")
+                comunicacao = sock
+  
 
 - JOGADA
-- Descição: Enviada por um jogador para informar ao oponente qual carta foi virada. São enviadas duas mensagens deste tipo por turno.
+- Descição: Enviada por um jogador para informar ao oponente qual carta foi virada.
 - Exemplo:
 
-		{
-		  "tipo": "JOGADA",
-		  "dados": {
-		    "jogador": "Jogador 1",
-		    "linha": 0,
-		    "coluna": 2
-		  }
-		}
+		jogada_dados = {
+        'linha1': l1,
+        'coluna1': c1,
+        'linha2': l2,
+        'coluna2': c2,
+        'resultado': 'acerto' if eh_par else 'erro'
+    	}
 
 - ATUALIZAR_ESTADO
 - Descrição: Enviada após uma jogada para sincronizar o estado do jogo em ambos os clientes. Informa qual o tabuleiro atual, de quem é a vez e a pontuação.
 - Exemplo:
 
-		  {
-		  "tipo": "ATUALIZAR_ESTADO",
-		  "dados": {
-		    "tabuleiro_sigilo": "[['xxxx', 'blue', ...], ...]",
-		    "turno": "Jogador 2",
-		    "pares_j1": 3,
-		    "pares_j2": 1
-		  }
-		}
+		if matriz_logica is None:
+        	status_text = "⏳ AGUARDANDO TABULEIRO..."
+        	cor_status = "orange"
+    	elif minha_vez:
+        	status_text = "🎯 SUA VEZ - Clique em duas cartas!"
+        	cor_status = "green"
+    	else:
+        	status_text = "⏳ VEZ DO OPONENTE - Aguarde..."
+        	cor_status = "red"
 
 - FIM_DE_JOGO
 - Descrição: Anuncia que todas as cartas foram encontradas e declara o vencedor.
 - Exemplo:
 
-		{
-		  "tipo": "FIM_DE_JOGO",
-		  "dados": {
-		    "vencedor": "Jogador 1",
-		    "mensagem": "Parabéns, você venceu!"
-		  }
-		}
+		messagebox.showinfo("Fim de Jogo", 
+                          f"{resultado}\n\n"
+                          f"Placar Final:\n"
+                          f"Você: {minha_pontuacao} pares\n"
+                          f"Oponente: {pontuacao_oponente} pares")
 
 
 Arquivo README.md escrito por João Victor.
